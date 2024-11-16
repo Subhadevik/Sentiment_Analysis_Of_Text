@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentiment Analysis</title>
+    <style>
+        /* styles.css */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e6e9ef; /* Light gray-blue background */
+            color: #2c3e50; /* Darker blue for text */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px; /* Add padding for small screens */
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%; /* Make it responsive */
+            padding: 30px;
+            background-color: #ffffff; /* White background for the container */
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Softer shadow for a professional look */
+            text-align: center;
+            position: relative; /* Ensures static height */
+        }
+
+        h1 {
+            color: #34495e; /* Darker blue for header */
+            font-size: 26px; /* Slightly larger font size */
+            margin-bottom: 20px;
+            font-weight: 700; /* Bolder header */
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px; /* Increased height for better usability */
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 2px solid #95a5a6; /* Light blue-gray border */
+            border-radius: 5px;
+            font-size: 16px;
+            resize: none; /* Prevents text area from resizing */
+            box-sizing: border-box;
+            transition: border-color 0.3s ease; /* Smooth border color transition */
+        }
+
+        textarea:focus {
+            border-color: #2980b9; /* Change border color on focus */
+            outline: none; /* Remove default outline */
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #2980b9; /* Mid blue button */
+            border: none;
+            border-radius: 5px;
+            color: #ffffff;
+            font-size: 18px; /* Larger font size for button */
+            font-weight: 600; /* Bolder button text */
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease; /* Transition for hover effects */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Subtle shadow for button */
+        }
+
+        button:hover {
+            background-color: #1f618d; /* Darker blue on hover */
+            transform: translateY(-2px); /* Slight lift effect on hover */
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #2980b9;
+        }
+
+        .container {
+            height: auto; /* Allow height to adjust based on content */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Ensures space distribution */
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 24px; /* Adjust header size for smaller screens */
+            }
+
+            button {
+                font-size: 16px; /* Adjust button size for smaller screens */
+            }
+
+            textarea {
+                height: 100px; /* Adjust textarea height for smaller screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sentiment Analysis</h1>
+        <form id="tweetForm">
+            <textarea id="tweetInput" placeholder="Enter a Tweet for Sentiment Analysis" required></textarea>
+            <button type="submit">Analyze Sentiment</button>
+        </form>
+        <div id="result"></div>
+    </div>
+    <script>
+        document.getElementById('tweetForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const tweet = document.getElementById('tweetInput').value;
+
+            if (tweet) {
+                try {
+                    const response = await fetch('/analyze', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ tweet })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        document.getElementById('result').innerHTML = `The sentiment is: <strong>${data.sentiment}</strong>`;
+                    } else {
+                        document.getElementById('result').innerHTML = 'Error: Could not analyze the sentiment.';
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    document.getElementById('result').innerHTML = 'Error: Could not analyze the sentiment.';
+                }
+            } else {
+                document.getElementById('result').innerHTML = 'Please enter a tweet.';
+            }
+        });
+    </script>
+</body>
+</html>
